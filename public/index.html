@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <title>GPTplexitycity - Image to Video</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+</head>
+
+<body style="background:#0f0f0f;color:white;text-align:center;font-family:Arial;padding:20px">
+
+<h2>🚀 GPTplexitycity</h2>
+<p>Image → Video AI Generator</p>
+
+<hr style="opacity:0.2">
+
+<h3>Option 1: Paste Image URL</h3>
+<input id="url" placeholder="https://example.com/image.jpg"
+style="width:90%;max-width:400px;padding:10px;border-radius:8px;border:none">
+
+<br><br>
+
+<h3>Option 2: Upload Image (Not Saved)</h3>
+<input type="file" id="file" accept="image/*">
+
+<br><br>
+
+<button onclick="start()"
+style="padding:12px 20px;border:none;border-radius:8px;background:#00ffcc;color:black;font-weight:bold">
+Generate Video
+</button>
+
+<br><br>
+
+<p id="status"></p>
+
+<div id="videoContainer" style="margin-top:20px"></div>
+
+<script>
+
+let predictionId;
+
+async function start() {
+  document.getElementById("status").innerText = "Starting...";
+
+  const formData = new FormData();
+  const file = document.getElementById("file").files[0];
+  const url = document.getElementById("url").value;
+
+  if (!file && !url) {
+    document.getElementById("status").innerText = "Please provide image URL or upload file.";
+    return;
+  }
+
+  if (file) {
+    formData.append("imageFile", file);
+  } else {
+    formData.append("imageUrl", url);
+  }
+
+  const res = await fetch("/start", {
+    method: "POST",
+    body: formData
+  });
+
+  const data = await res.json();
+
+  if (!data.id) {
+    document.getElementById("status").innerText = "Error starting generation.";
+    return;
+  }
+
+  predictionId = data.id;
+  checkStatus();
+}
+
+async function checkStatus() {
+
+  const interval = setInterval(async () => {
+
+    const res = await fetch("/status/" + predictionId);
+    const data = await res.json();
+
+    document.getElementById("status").innerText =
+      "Status: " + data.status;
+
+    if (data.status === "succeeded") {
+      clearInterval(interval);
+
+      document.getElementById("videoContainer").innerHTML =
+        `<video width="90%" controls src="${data.output[0]}"></video>`;
+
+      document.getElementById("status").innerText = "✅ Done!";
+    }
+
+    if (data.status === "failed") {
+      clearInterval(interval);
+      document.getElementById("status").innerText = "❌ Generation Failed";
+    }
+
+  }, 4000);
+
+}
+
+</script>
+
+</body>
+</html>
