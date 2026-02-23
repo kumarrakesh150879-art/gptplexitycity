@@ -1,14 +1,12 @@
 {
   "name": "gptplexitycity",
   "version": "1.0.0",
-  "description": "GPT Perfect City Video Generator",
   "main": "server.js",
   "scripts": {
     "start": "node server.js"
   },
   "dependencies": {
     "express": "^4.18.2",
-    "replicate": "^0.25.0",
-    "dotenv": "^16.4.5"
+    "replicate": "^0.25.0"
   }
 }
