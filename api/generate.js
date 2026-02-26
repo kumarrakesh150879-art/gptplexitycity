@@ -1,41 +1,32 @@
-import OpenAI from "openai";
-
 export default async function handler(req, res) {
-
-  if (req.method !== "POST") {
-    return res.status(405).json({ error: "Method not allowed" });
+  // Only allow POST requests
+  if (req.method !== 'POST') {
+    return res.status(405).json({ error: 'Method not allowed' });
   }
 
   try {
-    const { prompt, audio, duration } = req.body;
+    const { image, prompt, audio, duration } = req.body;
 
-    // Optional: OpenAI test call (safe)
-    let aiReply = "AI not connected";
+    // Log the received data to your Vercel console
+    console.log("Generating content with:", {
+      hasImage: !!image,
+      prompt,
+      audio,
+      duration
+    });
 
-    if (process.env.OPENAI_API_KEY) {
-      const openai = new OpenAI({
-        apiKey: process.env.OPENAI_API_KEY,
-      });
+    // Simulate an AI generation delay (2 seconds)
+    await new Promise((resolve) => setTimeout(resolve, 2000));
 
-      const response = await openai.chat.completions.create({
-        model: "gpt-4o-mini",
-        messages: [{ role: "user", content: prompt || "Hello" }],
-      });
-
-      aiReply = response.choices[0].message.content;
-    }
-
+    // Return a mock success response
     return res.status(200).json({
       success: true,
-      data: {
-        prompt,
-        audioEnabled: audio,
-        duration,
-        aiResponse: aiReply
-      }
+      message: "Content generated successfully!",
+      mockResultUrl: "https://example.com/generated-video.mp4"
     });
 
   } catch (error) {
-    return res.status(500).json({ error: "Something went wrong" });
+    console.error(error);
+    return res.status(500).json({ error: 'Internal Server Error' });
   }
 }
