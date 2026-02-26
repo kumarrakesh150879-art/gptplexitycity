@@ -1,12 +1,9 @@
 {
-  "name": "create-ui-pro",
+  "name": "create-ui-app",
   "version": "1.0.0",
-  "private": true,
-  "type": "module",
+  "description": "Generative UI with Vercel Serverless API",
   "scripts": {
     "dev": "vercel dev"
   },
-  "dependencies": {
-    "openai": "^4.0.0"
-  }
+  "dependencies": {}
 }
